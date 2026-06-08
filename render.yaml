@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: nova-cloud
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false        # manuell im Render Dashboard setzen
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PC_URL
+        value: ""          # Tailscale-IP eintragen wenn gewünscht
+      - key: NOVA_PASSWORD
+        sync: false        # optional: Schutz mit Passwort
