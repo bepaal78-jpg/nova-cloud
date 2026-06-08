@@ -1,0 +1,26 @@
+name: Keep NOVA Cloud Alive
+
+# Render Free Tier schläft nach 15min Inaktivität
+# Dieser Job pingt den Server alle 5 Minuten, komplett kostenlos (GitHub Actions)
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'    # alle 5 Minuten, 24/7
+  workflow_dispatch:          # auch manuell auslösbar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping NOVA Cloud
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://nova-cloud.onrender.com/health" \
+            --max-time 20 || echo "000")
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          echo "[$TIMESTAMP] Health check: HTTP $STATUS"
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ NOVA Cloud online"
+          else
+            echo "⚠️  Server schläft oder reagiert nicht (HTTP $STATUS)"
+          fi

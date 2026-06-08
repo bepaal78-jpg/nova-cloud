@@ -1,0 +1,37 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Deploy message'
+        required: false
+        default: 'Manual deploy'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          echo "Deploying NOVA Cloud to Render..."
+          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
+               -H "Content-Type: application/json" \
+               -d '{"clearCache": false}' \
+               --fail-with-body
+          echo "Deploy triggered!"
+
+      - name: Wait and verify
+        run: |
+          echo "Waiting 60s for Render to build..."
+          sleep 60
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://nova-cloud.onrender.com/health" \
+            --max-time 30 || echo "000")
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ NOVA Cloud is online!"
+          else
+            echo "⏳ Server starting up (status: $STATUS) — may need 2-3 min for cold start"
+          fi
