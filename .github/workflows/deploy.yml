@@ -28,7 +28,7 @@ jobs:
           echo "Waiting 60s for Render to build..."
           sleep 60
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://nova-cloud.onrender.com/health" \
+            "https://nova-cloud-7ak8.onrender.com/health" \
             --max-time 30 || echo "000")
           if [ "$STATUS" = "200" ]; then
             echo "✅ NOVA Cloud is online!"

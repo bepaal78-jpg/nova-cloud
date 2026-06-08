@@ -15,7 +15,7 @@ jobs:
       - name: Ping NOVA Cloud
         run: |
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://nova-cloud.onrender.com/health" \
+            "https://nova-cloud-7ak8.onrender.com/health" \
             --max-time 20 || echo "000")
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
           echo "[$TIMESTAMP] Health check: HTTP $STATUS"
